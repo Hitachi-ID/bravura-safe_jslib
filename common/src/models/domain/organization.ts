@@ -87,7 +87,7 @@ export class Organization {
     }
 
     get canAccessBusinessPortal() {
-        return this.isAdmin || this.permissions.accessBusinessPortal;
+        return false;
     }
 
     get canAccessEventLogs() {

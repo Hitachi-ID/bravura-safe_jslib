@@ -33,30 +33,6 @@ export const TwoFactorProviders = {
         sort: 1,
         premium: false,
     },
-    [TwoFactorProviderType.Yubikey]: {
-        type: TwoFactorProviderType.Yubikey,
-        name: null as string,
-        description: null as string,
-        priority: 3,
-        sort: 2,
-        premium: true,
-    },
-    [TwoFactorProviderType.Duo]: {
-        type: TwoFactorProviderType.Duo,
-        name: 'Duo',
-        description: null as string,
-        priority: 2,
-        sort: 3,
-        premium: true,
-    },
-    [TwoFactorProviderType.OrganizationDuo]: {
-        type: TwoFactorProviderType.OrganizationDuo,
-        name: 'Duo (Organization)',
-        description: null as string,
-        priority: 10,
-        sort: 4,
-        premium: false,
-    },
     [TwoFactorProviderType.Email]: {
         type: TwoFactorProviderType.Email,
         name: null as string,
@@ -64,14 +40,6 @@ export const TwoFactorProviders = {
         priority: 0,
         sort: 6,
         premium: false,
-    },
-    [TwoFactorProviderType.WebAuthn]: {
-        type: TwoFactorProviderType.WebAuthn,
-        name: null as string,
-        description: null as string,
-        priority: 4,
-        sort: 5,
-        premium: true,
     },
 };
 
@@ -104,18 +72,6 @@ export class AuthService implements AuthServiceAbstraction {
         TwoFactorProviders[TwoFactorProviderType.Authenticator].description =
             this.i18nService.t('authenticatorAppDesc');
 
-        TwoFactorProviders[TwoFactorProviderType.Duo].description = this.i18nService.t('duoDesc');
-
-        TwoFactorProviders[TwoFactorProviderType.OrganizationDuo].name =
-            'Duo (' + this.i18nService.t('organization') + ')';
-        TwoFactorProviders[TwoFactorProviderType.OrganizationDuo].description =
-            this.i18nService.t('duoOrganizationDesc');
-
-        TwoFactorProviders[TwoFactorProviderType.WebAuthn].name = this.i18nService.t('webAuthnTitle');
-        TwoFactorProviders[TwoFactorProviderType.WebAuthn].description = this.i18nService.t('webAuthnDesc');
-
-        TwoFactorProviders[TwoFactorProviderType.Yubikey].name = this.i18nService.t('yubiKeyTitle');
-        TwoFactorProviders[TwoFactorProviderType.Yubikey].description = this.i18nService.t('yubiKeyDesc');
     }
 
     async logIn(email: string, masterPassword: string): Promise<AuthResult> {
@@ -179,25 +135,9 @@ export class AuthService implements AuthServiceAbstraction {
             return providers;
         }
 
-        if (this.twoFactorProvidersData.has(TwoFactorProviderType.OrganizationDuo) &&
-            this.platformUtilsService.supportsDuo()) {
-            providers.push(TwoFactorProviders[TwoFactorProviderType.OrganizationDuo]);
-        }
 
         if (this.twoFactorProvidersData.has(TwoFactorProviderType.Authenticator)) {
             providers.push(TwoFactorProviders[TwoFactorProviderType.Authenticator]);
-        }
-
-        if (this.twoFactorProvidersData.has(TwoFactorProviderType.Yubikey)) {
-            providers.push(TwoFactorProviders[TwoFactorProviderType.Yubikey]);
-        }
-
-        if (this.twoFactorProvidersData.has(TwoFactorProviderType.Duo) && this.platformUtilsService.supportsDuo()) {
-            providers.push(TwoFactorProviders[TwoFactorProviderType.Duo]);
-        }
-
-        if (this.twoFactorProvidersData.has(TwoFactorProviderType.WebAuthn) && this.platformUtilsService.supportsWebAuthn(win)) {
-            providers.push(TwoFactorProviders[TwoFactorProviderType.WebAuthn]);
         }
 
         if (this.twoFactorProvidersData.has(TwoFactorProviderType.Email)) {
