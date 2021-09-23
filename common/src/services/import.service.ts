@@ -82,8 +82,8 @@ import { ZohoVaultCsvImporter } from '../importers/zohoVaultCsvImporter';
 
 export class ImportService implements ImportServiceAbstraction {
     featuredImportOptions = [
-        { id: 'bitwardenjson', name: 'Bitwarden (json)' },
-        { id: 'bitwardencsv', name: 'Bitwarden (csv)' },
+        { id: 'bitwardenjson', name: 'Bravura Pass (json)' },
+        { id: 'bitwardencsv', name: 'Bravura Pass (csv)' },
         { id: 'lastpasscsv', name: 'LastPass (csv)' },
         { id: 'chromecsv', name: 'Chrome (csv)' },
         { id: 'firefoxcsv', name: 'Firefox (csv)' },
