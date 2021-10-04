@@ -17,6 +17,7 @@ import { EncString } from '../models/domain/encString';
 export class VaultTimeoutService implements VaultTimeoutServiceAbstraction {
     pinProtectedKey: EncString = null;
     biometricLocked: boolean = true;
+    everBeenUnlocked: boolean = false;
 
     private inited = false;
 
@@ -46,13 +47,12 @@ export class VaultTimeoutService implements VaultTimeoutServiceAbstraction {
 
     // Keys aren't stored for a device that is locked or logged out.
     async isLocked(): Promise<boolean> {
-        const hasKey = await this.cryptoService.hasKey();
-        if (hasKey) {
-            if (await this.isBiometricLockSet() && this.biometricLocked) {
-                return true;
-            }
+        // Handle never lock startup situation
+        if (await this.cryptoService.hasKeyStored('auto') && !this.everBeenUnlocked) {
+            await this.cryptoService.getKey('auto');
         }
-        return !hasKey;
+
+        return !this.cryptoService.hasKeyInMemory();
     }
 
     async checkVaultTimeout(): Promise<void> {
@@ -102,18 +102,8 @@ export class VaultTimeoutService implements VaultTimeoutServiceAbstraction {
         }
 
         this.biometricLocked = true;
-        if (allowSoftLock) {
-            const biometricLocked = await this.isBiometricLockSet();
-            if (biometricLocked && this.platformUtilsService.supportsSecureStorage()) {
-                this.messagingService.send('locked');
-                if (this.lockedCallback != null) {
-                    await this.lockedCallback();
-                }
-                return;
-            }
-        }
-
-        await this.cryptoService.clearKey();
+        this.everBeenUnlocked = true;
+        await this.cryptoService.clearKey(false);
         await this.cryptoService.clearOrgKeys(true);
         await this.cryptoService.clearKeyPair(true);
         await this.cryptoService.clearEncKey(true);
@@ -152,6 +142,7 @@ export class VaultTimeoutService implements VaultTimeoutServiceAbstraction {
     }
 
     clear(): Promise<any> {
+        this.everBeenUnlocked = false;
         this.pinProtectedKey = null;
         return this.storageService.remove(ConstantsService.protectedPin);
     }

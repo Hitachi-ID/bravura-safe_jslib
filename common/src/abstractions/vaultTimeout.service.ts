@@ -2,6 +2,7 @@ import { EncString } from '../models/domain/encString';
 
 export abstract class VaultTimeoutService {
     biometricLocked: boolean;
+    everBeenUnlocked: boolean;
     pinProtectedKey: EncString;
     isLocked: () => Promise<boolean>;
     checkVaultTimeout: () => Promise<void>;

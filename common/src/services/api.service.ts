@@ -428,13 +428,19 @@ export class ApiService implements ApiServiceAbstraction {
     }
 
     async postSendAccess(id: string, request: SendAccessRequest, apiUrl?: string): Promise<SendAccessResponse> {
-        const r = await this.send('POST', '/sends/access/' + id, request, false, true, apiUrl);
+        const addSendIdHeader = (headers: Headers) => {
+            headers.set('Send-Id', id);
+        };
+        const r = await this.send('POST', '/sends/access/' + id, request, false, true, apiUrl, addSendIdHeader);
         return new SendAccessResponse(r);
     }
 
-
     async getSendFileDownloadData(send: SendAccessView, request: SendAccessRequest, apiUrl?: string): Promise<SendFileDownloadDataResponse> {
-        const r = await this.send('POST', '/sends/' + send.id + '/access/file/' + send.file.id, request, false, true, apiUrl);
+        const addSendIdHeader = (headers: Headers) => {
+            headers.set('Send-Id', send.id);
+        };
+        const r = await this.send('POST', '/sends/' + send.id + '/access/file/' + send.file.id, request, false, true,
+            apiUrl, addSendIdHeader);
         return new SendFileDownloadDataResponse(r);
     }
 
@@ -1306,8 +1312,8 @@ export class ApiService implements ApiServiceAbstraction {
     async getActiveBearerToken(): Promise<string> {
         let accessToken = await this.tokenService.getToken();
         if (this.tokenService.tokenNeedsRefresh()) {
-            const tokenResponse = await this.doRefreshToken();
-            accessToken = tokenResponse.accessToken;
+            await this.doRefreshToken();
+            accessToken = await this.tokenService.getToken();
         }
         return accessToken;
     }
@@ -1352,8 +1358,46 @@ export class ApiService implements ApiServiceAbstraction {
         }
     }
 
+    protected async doRefreshToken(): Promise<void> {
+        const refreshToken = await this.tokenService.getRefreshToken();
+        if (refreshToken == null || refreshToken === '') {
+            throw new Error();
+        }
+        const headers = new Headers({
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+            'Accept': 'application/json',
+            'Device-Type': this.deviceType,
+        });
+        if (this.customUserAgent != null) {
+            headers.set('User-Agent', this.customUserAgent);
+        }
+
+        const decodedToken = this.tokenService.decodeToken();
+        const response = await this.fetch(new Request(this.identityBaseUrl + '/connect/token', {
+            body: this.qsStringify({
+                grant_type: 'refresh_token',
+                client_id: decodedToken.client_id,
+                refresh_token: refreshToken,
+            }),
+            cache: 'no-store',
+            credentials: this.getCredentials(),
+            headers: headers,
+            method: 'POST',
+        }));
+
+        if (response.status === 200) {
+            const responseJson = await response.json();
+            const tokenResponse = new IdentityTokenResponse(responseJson);
+            await this.tokenService.setTokens(tokenResponse.accessToken, tokenResponse.refreshToken);
+        } else {
+            const error = await this.handleError(response, true, true);
+            return Promise.reject(error);
+        }
+    }
+
     private async send(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, body: any,
-        authed: boolean, hasResponse: boolean, apiUrl?: string): Promise<any> {
+        authed: boolean, hasResponse: boolean, apiUrl?: string,
+        alterHeaders?: (headers: Headers) => void): Promise<any> {
         apiUrl = Utils.isNullOrWhitespace(apiUrl) ? this.apiBaseUrl : apiUrl;
         const headers = new Headers({
             'Device-Type': this.deviceType,
@@ -1388,6 +1432,9 @@ export class ApiService implements ApiServiceAbstraction {
         if (hasResponse) {
             headers.set('Accept', 'application/json');
         }
+        if (alterHeaders != null) {
+            alterHeaders(headers);
+        }
 
         requestInit.headers = headers;
         const response = await this.fetch(new Request(apiUrl + path, requestInit));
@@ -1415,44 +1462,6 @@ export class ApiService implements ApiServiceAbstraction {
         }
 
         return new ErrorResponse(responseJson, response.status, tokenError);
-    }
-
-    private async doRefreshToken(): Promise<IdentityTokenResponse> {
-        const refreshToken = await this.tokenService.getRefreshToken();
-        if (refreshToken == null || refreshToken === '') {
-            throw new Error();
-        }
-        const headers = new Headers({
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-            'Accept': 'application/json',
-            'Device-Type': this.deviceType,
-        });
-        if (this.customUserAgent != null) {
-            headers.set('User-Agent', this.customUserAgent);
-        }
-
-        const decodedToken = this.tokenService.decodeToken();
-        const response = await this.fetch(new Request(this.identityBaseUrl + '/connect/token', {
-            body: this.qsStringify({
-                grant_type: 'refresh_token',
-                client_id: decodedToken.client_id,
-                refresh_token: refreshToken,
-            }),
-            cache: 'no-store',
-            credentials: this.getCredentials(),
-            headers: headers,
-            method: 'POST',
-        }));
-
-        if (response.status === 200) {
-            const responseJson = await response.json();
-            const tokenResponse = new IdentityTokenResponse(responseJson);
-            await this.tokenService.setTokens(tokenResponse.accessToken, tokenResponse.refreshToken);
-            return tokenResponse;
-        } else {
-            const error = await this.handleError(response, true, true);
-            return Promise.reject(error);
-        }
     }
 
     private qsStringify(params: any): string {
