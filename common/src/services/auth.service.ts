@@ -55,6 +55,7 @@ export class AuthService implements AuthServiceAbstraction {
     clientSecret: string;
     twoFactorProvidersData: Map<TwoFactorProviderType, { [key: string]: string; }>;
     selectedTwoFactorProviderType: TwoFactorProviderType = null;
+    captchaToken: string;
 
     private key: SymmetricCryptoKey;
 
@@ -76,14 +77,14 @@ export class AuthService implements AuthServiceAbstraction {
 
     }
 
-    async logIn(email: string, masterPassword: string): Promise<AuthResult> {
+    async logIn(email: string, masterPassword: string, captchaToken?: string): Promise<AuthResult> {
         this.selectedTwoFactorProviderType = null;
         const key = await this.makePreloginKey(masterPassword, email);
         const hashedPassword = await this.cryptoService.hashPassword(masterPassword, key);
         const localHashedPassword = await this.cryptoService.hashPassword(masterPassword, key,
             HashPurpose.LocalAuthorization);
         return await this.logInHelper(email, hashedPassword, localHashedPassword, null, null, null, null, null,
-            key, null, null, null);
+            key, null, null, null, captchaToken);
     }
 
     async logInSso(code: string, codeVerifier: string, redirectUrl: string): Promise<AuthResult> {
@@ -102,18 +103,18 @@ export class AuthService implements AuthServiceAbstraction {
         remember?: boolean): Promise<AuthResult> {
         return await this.logInHelper(this.email, this.masterPasswordHash, this.localMasterPasswordHash, this.code,
             this.codeVerifier, this.ssoRedirectUrl, this.clientId, this.clientSecret, this.key, twoFactorProvider,
-            twoFactorToken, remember);
+            twoFactorToken, remember, this.captchaToken);
     }
 
     async logInComplete(email: string, masterPassword: string, twoFactorProvider: TwoFactorProviderType,
-        twoFactorToken: string, remember?: boolean): Promise<AuthResult> {
+        twoFactorToken: string, remember?: boolean, captchaToken?: string): Promise<AuthResult> {
         this.selectedTwoFactorProviderType = null;
         const key = await this.makePreloginKey(masterPassword, email);
         const hashedPassword = await this.cryptoService.hashPassword(masterPassword, key);
         const localHashedPassword = await this.cryptoService.hashPassword(masterPassword, key,
             HashPurpose.LocalAuthorization);
         return await this.logInHelper(email, hashedPassword, localHashedPassword, null, null, null, null, null, key,
-            twoFactorProvider, twoFactorToken, remember);
+            twoFactorProvider, twoFactorToken, remember, captchaToken);
     }
 
     async logInSsoComplete(code: string, codeVerifier: string, redirectUrl: string,
@@ -212,14 +213,14 @@ export class AuthService implements AuthServiceAbstraction {
 
     private async logInHelper(email: string, hashedPassword: string, localHashedPassword: string, code: string,
         codeVerifier: string, redirectUrl: string, clientId: string, clientSecret: string, key: SymmetricCryptoKey,
-        twoFactorProvider?: TwoFactorProviderType, twoFactorToken?: string, remember?: boolean): Promise<AuthResult> {
+        twoFactorProvider?: TwoFactorProviderType, twoFactorToken?: string, remember?: boolean, captchaToken?: string): Promise<AuthResult> {
         const storedTwoFactorToken = await this.tokenService.getTwoFactorToken(email);
         const appId = await this.appIdService.getAppId();
         const deviceRequest = new DeviceRequest(appId, this.platformUtilsService);
 
         let emailPassword: string[] = [];
         let codeCodeVerifier: string[] = [];
-        let clientIdClientSecret: string[] = [];
+        let clientIdClientSecret: [string, string] = [null, null];
 
         if (email != null && hashedPassword != null) {
             emailPassword = [email, hashedPassword];
@@ -240,24 +241,27 @@ export class AuthService implements AuthServiceAbstraction {
         let request: TokenRequest;
         if (twoFactorToken != null && twoFactorProvider != null) {
             request = new TokenRequest(emailPassword, codeCodeVerifier, clientIdClientSecret, twoFactorProvider,
-                twoFactorToken, remember, deviceRequest);
+                twoFactorToken, remember, captchaToken, deviceRequest);
         } else if (storedTwoFactorToken != null) {
-            request = new TokenRequest(emailPassword, codeCodeVerifier, clientIdClientSecret, TwoFactorProviderType.Remember,
-                storedTwoFactorToken, false, deviceRequest);
+            request = new TokenRequest(emailPassword, codeCodeVerifier, clientIdClientSecret,
+                TwoFactorProviderType.Remember, storedTwoFactorToken, false, captchaToken, deviceRequest);
         } else {
             request = new TokenRequest(emailPassword, codeCodeVerifier, clientIdClientSecret, null,
-                null, false, deviceRequest);
+                null, false, captchaToken, deviceRequest);
         }
 
         const response = await this.apiService.postIdentityToken(request);
 
         this.clearState();
         const result = new AuthResult();
-        result.twoFactor = !(response as any).accessToken;
+        result.captchaSiteKey = (response as any).siteKey;
+        if (!!result.captchaSiteKey) {
+            return result;
+        }
+        result.twoFactor = !!(response as any).twoFactorProviders2;
 
         if (result.twoFactor) {
             // two factor required
-            const twoFactorResponse = response as IdentityTwoFactorResponse;
             this.email = email;
             this.masterPasswordHash = hashedPassword;
             this.localMasterPasswordHash = localHashedPassword;
@@ -267,8 +271,10 @@ export class AuthService implements AuthServiceAbstraction {
             this.clientId = clientId;
             this.clientSecret = clientSecret;
             this.key = this.setCryptoKeys ? key : null;
+            const twoFactorResponse = response as IdentityTwoFactorResponse;
             this.twoFactorProvidersData = twoFactorResponse.twoFactorProviders2;
             result.twoFactorProviders = twoFactorResponse.twoFactorProviders2;
+            this.captchaToken = twoFactorResponse.captchaToken;
             return result;
         }
 
@@ -278,7 +284,7 @@ export class AuthService implements AuthServiceAbstraction {
             await this.tokenService.setTwoFactorToken(tokenResponse.twoFactorToken, email);
         }
 
-        await this.tokenService.setTokens(tokenResponse.accessToken, tokenResponse.refreshToken);
+        await this.tokenService.setTokens(tokenResponse.accessToken, tokenResponse.refreshToken, clientIdClientSecret);
         await this.userService.setInformation(this.tokenService.getUserId(), this.tokenService.getEmail(),
             tokenResponse.kdf, tokenResponse.kdfIterations);
         if (this.setCryptoKeys) {
