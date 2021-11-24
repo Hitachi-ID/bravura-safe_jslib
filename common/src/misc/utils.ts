@@ -238,7 +238,9 @@ export class Utils {
 
                 const urlDomain = tldjs != null && tldjs.getDomain != null ? tldjs.getDomain(url.hostname) : null;
                 return urlDomain != null ? urlDomain : url.hostname;
-            } catch (e) { }
+            } catch (e) {
+                // Invalid domain, try another approach below.
+            }
         }
 
         try {
@@ -325,6 +327,10 @@ export class Utils {
         return url;
     }
 
+    static camelToPascalCase(s: string) {
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
     private static validIpAddress(ipString: string): boolean {
         // tslint:disable-next-line
         const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -363,7 +369,9 @@ export class Utils {
                 anchor.href = uriString;
                 return anchor as any;
             }
-        } catch (e) { }
+        } catch (e) {
+            // Ignore error
+        }
 
         return null;
     }
