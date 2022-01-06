@@ -509,8 +509,8 @@ export class LoginCommand {
                 res.setHeader('Content-Type', 'text/html');
                 if (code != null && receivedState != null && this.checkState(receivedState, state)) {
                     res.writeHead(200);
-                    res.end('<html><head><title>Success | Bravura Pass CLI</title></head><body>' +
-                        '<h1>Successfully authenticated with the Bravura Pass CLI</h1>' +
+                    res.end('<html><head><title>Success | Bravura Safe CLI</title></head><body>' +
+                        '<h1>Successfully authenticated with the Bravura Safe CLI</h1>' +
                         '<p>You may now close this tab and return to the terminal.</p>' +
                         '</body></html>');
                     callbackServer.close(() => resolve({
@@ -519,8 +519,8 @@ export class LoginCommand {
                     }));
                 } else {
                     res.writeHead(400);
-                    res.end('<html><head><title>Failed | Bravura Pass CLI</title></head><body>' +
-                        '<h1>Something went wrong logging into the Bravura Pass CLI</h1>' +
+                    res.end('<html><head><title>Failed | Bravura Safe CLI</title></head><body>' +
+                        '<h1>Something went wrong logging into the Bravura Safe CLI</h1>' +
                         '<p>You may now close this tab and return to the terminal.</p>' +
                         '</body></html>');
                     callbackServer.close(() => reject());
