@@ -21,6 +21,7 @@ export abstract class PlatformUtilsService {
   launchUri: (uri: string, options?: any) => void;
   saveFile: (win: Window, blobData: any, blobOptions: any, fileName: string) => void;
   getApplicationVersion: () => Promise<string>;
+  getInternalApplicationVersion: () => Promise<string>;
   supportsWebAuthn: (win: Window) => boolean;
   supportsDuo: () => boolean;
   showToast: (
