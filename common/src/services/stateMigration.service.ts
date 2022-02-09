@@ -97,6 +97,8 @@ const v1Keys = {
   vaultTimeoutAction: "vaultTimeoutAction",
   vaultTimeout: "lockOption",
   rememberedEmail: "rememberedEmail",
+  foldersCollapsed: "foldersCollapsed",
+  collectionsCollapsed: "collectionsCollapsed",
 };
 
 const v1KeyPrefixes = {
@@ -468,6 +470,14 @@ export class StateMigrationService {
                   vaultTimeout: await this.storageService.get<number>(v1Keys.vaultTimeout, options),
                   vaultTimeoutAction: await this.storageService.get<string>(
                     v1Keys.vaultTimeoutAction,
+                    options
+                  ),
+                  foldersCollapsed: await this.storageService.get<boolean>(
+                    v1Keys.foldersCollapsed,
+                    options
+                  ),
+                  collectionsCollapsed: await this.storageService.get<boolean>(
+                    v1Keys.collectionsCollapsed,
                     options
                   ),
                 },
