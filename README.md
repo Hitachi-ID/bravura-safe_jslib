@@ -1,8 +1,10 @@
 [![Github Workflow build on master](https://github.com/bitwarden/jslib/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/bitwarden/jslib/actions/workflows/build.yml?query=branch:master)
 
-# Bitwarden JavaScript Library
+Bravura Safe jslib is a clone/fork of the Bitwarden jslib github project
 
-Common code referenced across Bitwarden JavaScript projects.
+# JavaScript Library
+
+Common code referenced across JavaScript projects. (Bravura Safe jslib is a clone/fork of the Bitwarden jslib github project and uses the same JavaScript)
 
 ## Requirements
 
