@@ -213,7 +213,7 @@ export class StateService<
   async getAutoConfirmFingerPrints(options?: StorageOptions): Promise<boolean> {
     return (
       (await this.getAccount(this.reconcileOptions(options, await this.defaultOnDiskOptions())))
-        ?.settings?.autoConfirmFingerPrints ?? true
+        ?.settings?.autoConfirmFingerPrints ?? false
     );
   }
 
@@ -231,7 +231,7 @@ export class StateService<
   async getAutoFillOnPageLoadDefault(options?: StorageOptions): Promise<boolean> {
     return (
       (await this.getAccount(this.reconcileOptions(options, await this.defaultOnDiskOptions())))
-        ?.settings?.autoFillOnPageLoadDefault ?? false
+        ?.settings?.autoFillOnPageLoadDefault ?? true
     );
   }
 
@@ -446,7 +446,7 @@ export class StateService<
     if (options?.userId == null) {
       return;
     }
-    await this.secureStorageService.save(`${options.userId}${partialKeys.autoKey}`, value, options);
+    await this.saveSecureStorageKey(partialKeys.autoKey, value, options);
   }
 
   async getCryptoMasterKeyB64(options?: StorageOptions): Promise<string> {
@@ -465,11 +465,7 @@ export class StateService<
     if (options?.userId == null) {
       return;
     }
-    await this.secureStorageService.save(
-      `${options.userId}${partialKeys.masterKey}`,
-      value,
-      options
-    );
+    await this.saveSecureStorageKey(partialKeys.masterKey, value, options);
   }
 
   async getCryptoMasterKeyBiometric(options?: StorageOptions): Promise<string> {
@@ -508,11 +504,7 @@ export class StateService<
     if (options?.userId == null) {
       return;
     }
-    await this.secureStorageService.save(
-      `${options.userId}${partialKeys.biometricKey}`,
-      value,
-      options
-    );
+    await this.saveSecureStorageKey(partialKeys.biometricKey, value, options);
   }
 
   async getDecodedToken(options?: StorageOptions): Promise<any> {
@@ -2537,5 +2529,11 @@ export class StateService<
         ? this.defaultInMemoryOptions
         : await this.defaultOnDiskOptions();
     return this.reconcileOptions(options, defaultOptions);
+  }
+
+  private async saveSecureStorageKey(key: string, value: string, options?: StorageOptions) {
+    return value == null
+      ? await this.secureStorageService.remove(`${options.userId}${key}`, options)
+      : await this.secureStorageService.save(`${options.userId}${key}`, value, options);
   }
 }

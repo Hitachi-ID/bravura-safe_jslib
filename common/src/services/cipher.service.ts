@@ -657,7 +657,15 @@ export class CipherService implements CipherServiceAbstraction {
     }
     await Promise.all(promises);
     const request = new CipherBulkShareRequest(encCiphers, collectionIds);
-    await this.apiService.putShareCiphers(request);
+    try {
+      await this.apiService.putShareCiphers(request);
+    } catch (e) {
+      for (const cipher of ciphers) {
+        cipher.organizationId = null;
+        cipher.collectionIds = null;
+      }
+      throw e;
+    }
     const userId = await this.stateService.getUserId();
     await this.upsert(encCiphers.map((c) => c.toCipherData(userId)));
   }
@@ -1021,7 +1029,7 @@ export class CipherService implements CipherServiceAbstraction {
       ciphers[c.id].revisionDate = c.revisionDate;
     };
 
-    if (cipher.constructor.name === "Array") {
+    if (cipher.constructor.name === Array.name) {
       (cipher as { id: string; revisionDate: string }[]).forEach(clearDeletedDate);
     } else {
       clearDeletedDate(cipher as { id: string; revisionDate: string });

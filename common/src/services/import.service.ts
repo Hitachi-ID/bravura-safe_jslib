@@ -26,7 +26,8 @@ import { ButtercupCsvImporter } from "../importers/buttercupCsvImporter";
 import { ChromeCsvImporter } from "../importers/chromeCsvImporter";
 import { ClipperzHtmlImporter } from "../importers/clipperzHtmlImporter";
 import { CodebookCsvImporter } from "../importers/codebookCsvImporter";
-import { DashlaneJsonImporter } from "../importers/dashlaneJsonImporter";
+import { DashlaneCsvImporter } from "../importers/dashlaneImporters/dashlaneCsvImporter";
+import { DashlaneJsonImporter } from "../importers/dashlaneImporters/dashlaneJsonImporter";
 import { EncryptrCsvImporter } from "../importers/encryptrCsvImporter";
 import { EnpassCsvImporter } from "../importers/enpassCsvImporter";
 import { EnpassJsonImporter } from "../importers/enpassJsonImporter";
@@ -46,6 +47,7 @@ import { MSecureCsvImporter } from "../importers/msecureCsvImporter";
 import { MykiCsvImporter } from "../importers/mykiCsvImporter";
 import { NordPassCsvImporter } from "../importers/nordpassCsvImporter";
 import { OnePassword1PifImporter } from "../importers/onepasswordImporters/onepassword1PifImporter";
+import { OnePassword1PuxImporter } from "../importers/onepasswordImporters/onepassword1PuxImporter";
 import { OnePasswordMacCsvImporter } from "../importers/onepasswordImporters/onepasswordMacCsvImporter";
 import { OnePasswordWinCsvImporter } from "../importers/onepasswordImporters/onepasswordWinCsvImporter";
 import { PadlockCsvImporter } from "../importers/padlockCsvImporter";
@@ -199,6 +201,8 @@ export class ImportService implements ImportServiceAbstraction {
         return new MeldiumCsvImporter();
       case "1password1pif":
         return new OnePassword1PifImporter();
+      case "1password1pux":
+        return new OnePassword1PuxImporter();
       case "1passwordwincsv":
         return new OnePasswordWinCsvImporter();
       case "1passwordmaccsv":
@@ -215,6 +219,8 @@ export class ImportService implements ImportServiceAbstraction {
         return new EnpassJsonImporter();
       case "pwsafexml":
         return new PasswordSafeXmlImporter();
+      case "dashlanecsv":
+        return new DashlaneCsvImporter();
       case "dashlanejson":
         return new DashlaneJsonImporter();
       case "msecurecsv":
