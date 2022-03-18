@@ -1,8 +1,12 @@
-[![Github Workflow build on master](https://github.com/bitwarden/jslib/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/bitwarden/jslib/actions/workflows/build.yml?query=branch:master)
-
 # Bitwarden JavaScript Library
 
+Hitachi ID Bravura Safe is a modified version of Bitwarden®. It was developed using Bitwarden open source software. Hitachi ID Systems, Inc. and Bravura Safe are not affiliated with or endorsed by Bitwarden or Bitwarden, Inc. Bitwarden is a trademark or registered trademark of Bitwarden, Inc. in the United States and/or other countries.
+The original work is available at [https://github.com/bitwarden/server].
+The original documentation is available at [https://bitwarden.com/help/].
+A complete list of all changes is available in the git history of this project.
+
 Common code referenced across Bitwarden JavaScript projects.
+
 
 ## Requirements
 
@@ -16,10 +20,6 @@ Common code referenced across Bitwarden JavaScript projects.
 - _Microsoft Build Tools 2015_ in Visual Studio Installer
 - [Windows 10 SDK 17134](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/)
   either by downloading it seperately or through the Visual Studio Installer.
-
-## We're Hiring!
-
-Interested in contributing in a big way? Consider joining our team! We're hiring for many positions. Please take a look at our [Careers page](https://bitwarden.com/careers/) to see what opportunities are currently open as well as what it's like to work at Bitwarden.
 
 ## Prettier
 
