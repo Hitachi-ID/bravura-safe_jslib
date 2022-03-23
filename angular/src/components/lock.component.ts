@@ -271,7 +271,7 @@ export class LockComponent implements OnInit {
 
     const webVaultUrl = this.environmentService.getWebVaultUrl();
     const vaultUrl =
-      webVaultUrl === "https://vault.bitwarden.com" ? "https://bitwarden.com" : webVaultUrl;
+      webVaultUrl === "https://hitachi-id.com" ? "https://hitachi-id.com" : webVaultUrl;
     this.webVaultHostname = Utils.getHostname(vaultUrl);
   }
 }
