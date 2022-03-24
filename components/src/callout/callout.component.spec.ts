@@ -32,28 +32,28 @@ describe("Callout", () => {
       component.type = "success";
       fixture.detectChanges();
       expect(component.title).toBeUndefined();
-      expect(component.icon).toBe("bwi-check");
+      expect(component.icon).toBe("fa-check");
     });
 
     it("info", () => {
       component.type = "info";
       fixture.detectChanges();
       expect(component.title).toBeUndefined();
-      expect(component.icon).toBe("bwi-info-circle");
+      expect(component.icon).toBe("fa-info-circle");
     });
 
     it("warning", () => {
       component.type = "warning";
       fixture.detectChanges();
       expect(component.title).toBe("Warning");
-      expect(component.icon).toBe("bwi-exclamation-triangle");
+      expect(component.icon).toBe("fa-warning");
     });
 
     it("danger", () => {
       component.type = "danger";
       fixture.detectChanges();
       expect(component.title).toBe("Error");
-      expect(component.icon).toBe("bwi-error");
+      expect(component.icon).toBe("fa-bolt");
     });
   });
 });
