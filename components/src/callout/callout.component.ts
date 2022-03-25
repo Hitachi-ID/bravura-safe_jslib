@@ -5,10 +5,10 @@ import { I18nService } from "jslib-common/abstractions/i18n.service";
 type CalloutTypes = "success" | "info" | "warning" | "danger";
 
 const defaultIcon: Record<CalloutTypes, string> = {
-  success: "bwi-check",
-  info: "bwi-info-circle",
-  warning: "bwi-exclamation-triangle",
-  danger: "bwi-error",
+  success: "fa-check",
+  info: "fa-info-circle",
+  warning: "fa-warning",
+  danger: "fa-bolt",
 };
 
 const defaultI18n: Partial<Record<CalloutTypes, string>> = {
