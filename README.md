@@ -1,14 +1,15 @@
-Hitachi ID Bravura Safe is a modified version of Bitwarden®. It was developed using Bitwarden open source software. Hitachi ID Systems, Inc. and Bravura Safe are not affiliated with or endorsed by Bitwarden or Bitwarden, Inc. Bitwarden is a trademark or registered trademark of Bitwarden, Inc. in the United States and/or other countries. 
+# JavaScript Library
 
-The original work is available at [https://github.com/bitwarden/jslib]. 
+**Hitachi ID Bravura Safe is a modified version of Bitwarden®. It was developed using Bitwarden open source software.  
+Hitachi ID Systems, Inc. and Bravura Safe are not affiliated with or endorsed by Bitwarden or Bitwarden, Inc.  
+Bitwarden is a trademark or registered trademark of Bitwarden, Inc. in the United States and/or other countries.**
+
+The original work is available at [https://github.com/bitwarden/server].
 The original documentation is available at [https://bitwarden.com/help/].
 A complete list of all changes is available in the git history of this project.
 
-Bravura Safe jslib is a clone/fork of the Bitwarden jslib github project
+Common code referenced across Bitwarden JavaScript projects.
 
-# JavaScript Library
-
-Common code referenced across JavaScript projects. (Bravura Safe jslib is a clone/fork of the Bitwarden jslib github project and uses the same JavaScript)
 
 ## Requirements
 

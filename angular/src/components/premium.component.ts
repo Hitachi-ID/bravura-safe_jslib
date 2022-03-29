@@ -8,8 +8,8 @@ import { StateService } from "jslib-common/abstractions/state.service";
 
 @Directive()
 export class PremiumComponent implements OnInit {
-  isPremium: boolean = false;
-  price: number = 10;
+  isPremium = false;
+  price = 10;
   refreshPromise: Promise<any>;
 
   constructor(
@@ -43,7 +43,7 @@ export class PremiumComponent implements OnInit {
       this.i18nService.t("cancel")
     );
     if (confirmed) {
-      this.platformUtilsService.launchUri("https://vault.bitwarden.com/#/?premium=purchase");
+      this.platformUtilsService.launchUri("https://hitachi-id.com/#/?premium=purchase");
     }
   }
 
@@ -55,7 +55,7 @@ export class PremiumComponent implements OnInit {
       this.i18nService.t("cancel")
     );
     if (confirmed) {
-      this.platformUtilsService.launchUri("https://vault.bitwarden.com/#/?premium=manage");
+      this.platformUtilsService.launchUri("https://hitachi-id.com/#/?premium=manage");
     }
   }
 }
