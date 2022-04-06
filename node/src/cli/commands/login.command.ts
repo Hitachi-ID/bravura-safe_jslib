@@ -442,7 +442,7 @@ export class LoginCommand {
     const badCaptcha = Response.badRequest(
       "Your authentication request has been flagged and will require user interaction to proceed.\n" +
         "Please use your API key to validate this request and ensure BW_CLIENTSECRET is correct, if set.\n" +
-        "(https://bitwarden.com/help/cli-auth-challenges)"
+        "(https://<instance>.safe.hitachi-id.net/help/cli-auth-challenges)"
     );
 
     try {

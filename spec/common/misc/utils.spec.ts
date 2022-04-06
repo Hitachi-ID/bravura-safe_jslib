@@ -15,18 +15,18 @@ describe("Utils Service", () => {
     });
 
     it("should handle urls without protocol", () => {
-      expect(Utils.getDomain("bitwarden.com")).toBe("bitwarden.com");
-      expect(Utils.getDomain("wrong://bitwarden.com")).toBe("bitwarden.com");
+      expect(Utils.getDomain("safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
+      expect(Utils.getDomain("wrong://safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
     });
 
     it("should handle valid urls", () => {
       expect(Utils.getDomain("https://bitwarden")).toBe("bitwarden");
-      expect(Utils.getDomain("https://bitwarden.com")).toBe("bitwarden.com");
-      expect(Utils.getDomain("http://bitwarden.com")).toBe("bitwarden.com");
-      expect(Utils.getDomain("http://vault.bitwarden.com")).toBe("bitwarden.com");
+      expect(Utils.getDomain("https://safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
+      expect(Utils.getDomain("http://safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
+      expect(Utils.getDomain("http://vault.safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
       expect(
-        Utils.getDomain("https://user:password@bitwarden.com:8080/password/sites?and&query#hash")
-      ).toBe("bitwarden.com");
+        Utils.getDomain("https://user:password@safe.hitachi-id.net:8080/password/sites?and&query#hash")
+      ).toBe("safe.hitachi-id.net");
       expect(Utils.getDomain("https://bitwarden.unknown")).toBe("bitwarden.unknown");
     });
 
@@ -51,10 +51,10 @@ describe("Utils Service", () => {
     });
 
     it("should handle valid urls", () => {
-      expect(Utils.getHostname("bitwarden.com")).toBe("bitwarden.com");
-      expect(Utils.getHostname("https://bitwarden.com")).toBe("bitwarden.com");
-      expect(Utils.getHostname("http://bitwarden.com")).toBe("bitwarden.com");
-      expect(Utils.getHostname("http://vault.bitwarden.com")).toBe("vault.bitwarden.com");
+      expect(Utils.getHostname("safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
+      expect(Utils.getHostname("https://safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
+      expect(Utils.getHostname("http://safe.hitachi-id.net")).toBe("safe.hitachi-id.net");
+      expect(Utils.getHostname("http://vault.safe.hitachi-id.net")).toBe("vault.safe.hitachi-id.net");
     });
 
     it("should support localhost and IP", () => {
