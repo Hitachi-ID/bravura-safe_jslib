@@ -18,7 +18,7 @@ const TestDataWithStyleSetToWebsite: string = JSON.stringify({
       service: "My first pass",
       style: "website",
       type: 1,
-      url: "https://bitwarden.com",
+      url: "https://safe.hitachi-id.net",
       username: "pass",
     },
   },

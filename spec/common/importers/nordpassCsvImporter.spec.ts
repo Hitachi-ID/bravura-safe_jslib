@@ -63,7 +63,7 @@ function expectLogin(cipher: CipherView) {
   expect(cipher.name).toBe("SomeVaultItemName");
   expect(cipher.notes).toBe("Some note for the VaultItem");
   expect(cipher.login.uri).toBe("https://example.com");
-  expect(cipher.login.username).toBe("hello@bitwarden.com");
+  expect(cipher.login.username).toBe("hello@safe.hitachi-id.net");
   expect(cipher.login.password).toBe("someStrongPassword");
 }
 
@@ -87,7 +87,7 @@ function expectIdentity(cipher: CipherView) {
   expect(cipher.identity.firstName).toBe("MyFirstName");
   expect(cipher.identity.middleName).toBe("MyMiddleName");
   expect(cipher.identity.lastName).toBe("MyLastName");
-  expect(cipher.identity.email).toBe("hello@bitwarden.com");
+  expect(cipher.identity.email).toBe("hello@safe.hitachi-id.net");
   expect(cipher.identity.phone).toBe("123456789");
 
   expect(cipher.identity.address1).toBe("Test street 123");
