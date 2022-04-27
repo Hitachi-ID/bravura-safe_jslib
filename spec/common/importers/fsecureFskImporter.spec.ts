@@ -18,7 +18,7 @@ const TestDataWithStyleSetToWebsite: string = JSON.stringify({
       service: "My first pass",
       style: "website",
       type: 1,
-      url: "https://bitwarden.com",
+      url: "https://safe.hitachi-id.net",
       username: "pass",
     },
   },
@@ -42,7 +42,7 @@ const TestDataWithStyleSetToGlobe: string = JSON.stringify({
       service: "My first pass",
       style: "globe",
       type: 1,
-      url: "https://bitwarden.com",
+      url: "https://safe.hitachi-id.net",
       username: "pass",
     },
   },
@@ -59,7 +59,7 @@ describe("FSecure FSK Importer", () => {
     expect(cipher.login.password).toEqual("word");
     expect(cipher.login.uris.length).toEqual(1);
     const uriView = cipher.login.uris.shift();
-    expect(uriView.uri).toEqual("https://bitwarden.com");
+    expect(uriView.uri).toEqual("https://safe.hitachi-id.net");
   });
 
   it("should parse data with style set to globe", async () => {
@@ -72,6 +72,6 @@ describe("FSecure FSK Importer", () => {
     expect(cipher.login.password).toEqual("word");
     expect(cipher.login.uris.length).toEqual(1);
     const uriView = cipher.login.uris.shift();
-    expect(uriView.uri).toEqual("https://bitwarden.com");
+    expect(uriView.uri).toEqual("https://safe.hitachi-id.net");
   });
 });
