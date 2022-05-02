@@ -1385,7 +1385,11 @@ export class StateService<
       return await this.getGlobalEnvironmentUrls(options);
     }
     options = this.reconcileOptions(options, await this.defaultOnDiskOptions());
-    return (await this.getAccount(options))?.settings?.environmentUrls ?? new EnvironmentUrls();
+    const urls: any = (await this.getAccount(options))?.settings?.environmentUrls ?? new EnvironmentUrls();
+    if( urls.base == null) {
+      return await this.getGlobalEnvironmentUrls(options);
+    }
+    return urls;
   }
 
   async setEnvironmentUrls(value: EnvironmentUrls, options?: StorageOptions): Promise<void> {
