@@ -36,6 +36,7 @@ import { TokenService as TokenServiceAbstraction } from "jslib-common/abstractio
 import { TotpService as TotpServiceAbstraction } from "jslib-common/abstractions/totp.service";
 import { TwoFactorService as TwoFactorServiceAbstraction } from "jslib-common/abstractions/twoFactor.service";
 import { UserVerificationService as UserVerificationServiceAbstraction } from "jslib-common/abstractions/userVerification.service";
+import { UsernameGenerationService as UsernameGenerationServiceAbstraction } from "jslib-common/abstractions/usernameGeneration.service";
 import { VaultTimeoutService as VaultTimeoutServiceAbstraction } from "jslib-common/abstractions/vaultTimeout.service";
 import { StateFactory } from "jslib-common/factories/stateFactory";
 import { Account } from "jslib-common/models/domain/account";
@@ -69,6 +70,7 @@ import { TokenService } from "jslib-common/services/token.service";
 import { TotpService } from "jslib-common/services/totp.service";
 import { TwoFactorService } from "jslib-common/services/twoFactor.service";
 import { UserVerificationService } from "jslib-common/services/userVerification.service";
+import { UsernameGenerationService } from "jslib-common/services/usernameGeneration.service";
 import { VaultTimeoutService } from "jslib-common/services/vaultTimeout.service";
 import { WebCryptoFunctionService } from "jslib-common/services/webCryptoFunction.service";
 
@@ -199,17 +201,24 @@ import { ValidationService } from "./validation.service";
       deps: [CryptoServiceAbstraction, PolicyServiceAbstraction, StateServiceAbstraction],
     },
     {
+      provide: UsernameGenerationServiceAbstraction,
+      useClass: UsernameGenerationService,
+      deps: [CryptoServiceAbstraction, StateServiceAbstraction],
+    },
+    {
       provide: ApiServiceAbstraction,
       useFactory: (
         tokenService: TokenServiceAbstraction,
         platformUtilsService: PlatformUtilsServiceAbstraction,
         environmentService: EnvironmentServiceAbstraction,
-        messagingService: MessagingServiceAbstraction
+        messagingService: MessagingServiceAbstraction,
+        appIdService: AppIdServiceAbstraction
       ) =>
         new ApiService(
           tokenService,
           platformUtilsService,
           environmentService,
+          appIdService,
           async (expired: boolean) => messagingService.send("logout", { expired: expired })
         ),
       deps: [
@@ -217,6 +226,7 @@ import { ValidationService } from "./validation.service";
         PlatformUtilsServiceAbstraction,
         EnvironmentServiceAbstraction,
         MessagingServiceAbstraction,
+        AppIdServiceAbstraction,
       ],
     },
     {
@@ -413,7 +423,7 @@ import { ValidationService } from "./validation.service";
     {
       provide: CryptoFunctionServiceAbstraction,
       useClass: WebCryptoFunctionService,
-      deps: ["WINDOW", PlatformUtilsServiceAbstraction],
+      deps: ["WINDOW"],
     },
     {
       provide: EventServiceAbstraction,
