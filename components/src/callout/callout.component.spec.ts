@@ -33,6 +33,7 @@ describe("Callout", () => {
       fixture.detectChanges();
       expect(component.title).toBeUndefined();
       expect(component.icon).toBe("fa-check");
+      expect(component.headerClass).toBe("!tw-text-success");
     });
 
     it("info", () => {
@@ -40,6 +41,7 @@ describe("Callout", () => {
       fixture.detectChanges();
       expect(component.title).toBeUndefined();
       expect(component.icon).toBe("fa-info-circle");
+      expect(component.headerClass).toBe("!tw-text-info");
     });
 
     it("warning", () => {
@@ -47,6 +49,7 @@ describe("Callout", () => {
       fixture.detectChanges();
       expect(component.title).toBe("Warning");
       expect(component.icon).toBe("fa-warning");
+      expect(component.headerClass).toBe("!tw-text-warning");
     });
 
     it("danger", () => {
@@ -54,6 +57,7 @@ describe("Callout", () => {
       fixture.detectChanges();
       expect(component.title).toBe("Error");
       expect(component.icon).toBe("fa-bolt");
+      expect(component.headerClass).toBe("!tw-text-danger");
     });
   });
 });
