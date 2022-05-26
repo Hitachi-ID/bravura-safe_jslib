@@ -1381,11 +1381,16 @@ export class StateService<
   }
 
   async getEnvironmentUrls(options?: StorageOptions): Promise<EnvironmentUrls> {
+    const globalUrls = await this.getGlobalEnvironmentUrls(options);
     if (this.state.activeUserId == null) {
-      return await this.getGlobalEnvironmentUrls(options);
+      return globalUrls;
     }
     options = this.reconcileOptions(options, await this.defaultOnDiskOptions());
-    return (await this.getAccount(options))?.settings?.environmentUrls ?? new EnvironmentUrls();
+    const urls: any = (await this.getAccount(options))?.settings?.environmentUrls ?? new EnvironmentUrls();
+    if( urls.base == null) {
+      return globalUrls;
+    }
+    return urls;
   }
 
   async setEnvironmentUrls(value: EnvironmentUrls, options?: StorageOptions): Promise<void> {
@@ -1633,19 +1638,6 @@ export class StateService<
     );
   }
 
-  async getLoginRedirect(options?: StorageOptions): Promise<any> {
-    return (await this.getGlobals(this.reconcileOptions(options, this.defaultInMemoryOptions)))
-      ?.loginRedirect;
-  }
-
-  async setLoginRedirect(value: any, options?: StorageOptions): Promise<void> {
-    const globals = await this.getGlobals(
-      this.reconcileOptions(options, this.defaultInMemoryOptions)
-    );
-    globals.loginRedirect = value;
-    await this.saveGlobals(globals, this.reconcileOptions(options, this.defaultInMemoryOptions));
-  }
-
   async getMainWindowSize(options?: StorageOptions): Promise<number> {
     return (await this.getGlobals(this.reconcileOptions(options, this.defaultInMemoryOptions)))
       ?.mainWindowSize;
@@ -1791,6 +1783,40 @@ export class StateService<
       this.reconcileOptions(options, await this.defaultOnDiskOptions())
     );
     account.settings.passwordGenerationOptions = value;
+    await this.saveAccount(
+      account,
+      this.reconcileOptions(options, await this.defaultOnDiskOptions())
+    );
+  }
+
+  async getUsernameGenerationOptions(options?: StorageOptions): Promise<any> {
+    return (
+      await this.getAccount(this.reconcileOptions(options, await this.defaultOnDiskOptions()))
+    )?.settings?.usernameGenerationOptions;
+  }
+
+  async setUsernameGenerationOptions(value: any, options?: StorageOptions): Promise<void> {
+    const account = await this.getAccount(
+      this.reconcileOptions(options, await this.defaultOnDiskOptions())
+    );
+    account.settings.usernameGenerationOptions = value;
+    await this.saveAccount(
+      account,
+      this.reconcileOptions(options, await this.defaultOnDiskOptions())
+    );
+  }
+
+  async getGeneratorOptions(options?: StorageOptions): Promise<any> {
+    return (
+      await this.getAccount(this.reconcileOptions(options, await this.defaultOnDiskOptions()))
+    )?.settings?.generatorOptions;
+  }
+
+  async setGeneratorOptions(value: any, options?: StorageOptions): Promise<void> {
+    const account = await this.getAccount(
+      this.reconcileOptions(options, await this.defaultOnDiskOptions())
+    );
+    account.settings.generatorOptions = value;
     await this.saveAccount(
       account,
       this.reconcileOptions(options, await this.defaultOnDiskOptions())
@@ -2491,11 +2517,10 @@ export class StateService<
   protected async deAuthenticateAccount(userId: string) {
     await this.setAccessToken(null, { userId: userId });
     await this.setLastActive(null, { userId: userId });
-    const index = this.state.authenticatedAccounts.indexOf(userId);
-    if (index > -1) {
-      this.state.authenticatedAccounts.splice(index, 1);
-      await this.storageService.save(keys.authenticatedAccounts, this.state.authenticatedAccounts);
-    }
+    this.state.authenticatedAccounts = this.state.authenticatedAccounts.filter(
+      (activeUserId) => activeUserId !== userId
+    );
+    await this.storageService.save(keys.authenticatedAccounts, this.state.authenticatedAccounts);
   }
 
   protected async removeAccountFromDisk(userId: string) {
