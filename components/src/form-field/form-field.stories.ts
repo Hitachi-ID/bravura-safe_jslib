@@ -170,10 +170,10 @@ const ButtonGroupTemplate: Story<BitFormFieldComponent> = (args: BitFormFieldCom
       <button bitPrefix bitButton>Button</button>
       <button bitPrefix bitButton>Button</button>
       <button bitSuffix bitButton>
-        <i aria-hidden="true" class="bwi bwi-lg bwi-eye"></i>
+        <i aria-hidden="true" class="fa fa-lg fa-eye"></i>
       </button>
       <button bitSuffix bitButton>
-        <i aria-hidden="true" class="bwi bwi-lg bwi-clone"></i>
+        <i aria-hidden="true" class="fa fa-lg fa-copy"></i>
       </button>
     </bit-form-field>
   `,

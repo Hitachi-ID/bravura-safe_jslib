@@ -7,7 +7,7 @@ let nextId = 0;
 
 @Component({
   selector: "bit-error",
-  template: `<i class="bwi bwi-error"></i> {{ displayError }}`,
+  template: `<i class="fa fa-error"></i> {{ displayError }}`,
   host: {
     class: "tw-block tw-mt-1 tw-text-danger",
     "aria-live": "assertive",
