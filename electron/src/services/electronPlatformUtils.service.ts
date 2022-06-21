@@ -98,6 +98,10 @@ export class ElectronPlatformUtilsService implements PlatformUtilsService {
     return ipcRenderer.invoke("appVersion");
   }
 
+  getInternalApplicationVersion(): Promise<string> {
+    return ipcRenderer.invoke("appVersion");
+  }
+
   // Temporarily restricted to only Windows until https://github.com/electron/electron/pull/28349
   // has been merged and an updated electron build is available.
   supportsWebAuthn(win: Window): boolean {
