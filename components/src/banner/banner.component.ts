@@ -3,10 +3,10 @@ import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 type BannerTypes = "premium" | "info" | "warning" | "danger";
 
 const defaultIcon: Record<BannerTypes, string> = {
-  premium: "bwi-star",
-  info: "bwi-info-circle",
-  warning: "bwi-exclamation-triangle",
-  danger: "bwi-error",
+  premium: "fa-star",
+  info: "fa-info-circle",
+  warning: "fa-exclamation-triangle",
+  danger: "fa-error",
 };
 
 @Component({
